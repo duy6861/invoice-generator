@@ -2,7 +2,7 @@ import React from 'react'
 import { Plus, Trash2, X } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { toggleForm } from '../store/invoiceSlice' // Correctly importing toggleForm
-import { format } from 'date-fns'
+import { format, addDays } from 'date-fns'
 function InvoiceForm() {
   const dispatch = useDispatch()
   const [formData, setFormData] = React.useState(() => {
@@ -27,6 +27,8 @@ function InvoiceForm() {
       paymentTerms: 'net-30',
       projectDescription: '',
       invoiceDate: format(new Date(), 'yyyy-MM-dd'), // Default to today
+      dueDate: format(addDays(new Date(), 30), 'yyyy-MM-dd'), // Default to today
+      amount: 0
     }
   })
 
@@ -47,27 +49,66 @@ function InvoiceForm() {
         <form className='space-y-6'>
           <div className='space-y-4'>
             <h3 className='text-violet-500 font-bold uppercase'>Bill From</h3>
-            <input type='text' placeholder='Street Address' required className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='Street Address' 
+              value={formData.billFrom.streetAddress}
+              onChange={(e) => setFormData({ ...formData, billFrom: { ...formData.billFrom, streetAddress: e.target.value } })}
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
           </div>
 
           <div className='grid grid-cols-1  sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-            <input type='text' placeholder='City' required className='w-full bg-slate-900 rounded-lg p-3' />
-            <input type='text' placeholder='Post Code' required className='w-full bg-slate-900 rounded-lg p-3' />
-            <input type='text' placeholder='Country' required className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='City'
+              value={formData.billFrom.city}
+              onChange={(e) => setFormData({ ...formData, billFrom: { ...formData.billFrom, city: e.target.value } })}
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='Post Code'
+              value={formData.billFrom.postCode}
+              onChange={(e) => setFormData({ ...formData, billFrom: { ...formData.billFrom, postCode: e.target.value } })}
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='Country'
+              value={formData.billFrom.country}
+              onChange={(e) => setFormData({ ...formData, billFrom: { ...formData.billFrom, country: e.target.value } })}
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
           </div>
 
           <div className='space-y-4'>
             <h3 className='text-violet-500 font-bold uppercase'>Bill To</h3>
-            <input type='text' placeholder="Client's Name" required className='w-full bg-slate-900 rounded-lg p-3' />
-            <input type='email' placeholder="Client's Email" required className='w-full bg-slate-900 rounded-lg p-3' />
-            <input type='text' placeholder='Street Address' required className='w-full bg-slate-900 rounded-lg p-3' />
-            <input type='text' placeholder='City' required className='w-full bg-slate-900 rounded-lg p-3' />
-            <input type='text' placeholder='Post Code' required className='w-full bg-slate-900 rounded-lg p-3' />
-            <input type='text' placeholder='Country' required className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder="Client's Name" 
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='email' 
+              placeholder="Client's Email" 
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='Street Address' 
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='City'
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='Post Code' 
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='Country' 
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
           </div>
           <div className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
-              <input type='date' className='bg-slate-900 rounded-lg p-3' />
+              <input type='date' 
+                className='w-full bg-slate-900 rounded-lg p-3' />
               <select className='bg-slate-900 rounded-lg p-3' required>
                 <option value=''>Net 30 Days</option>
                 <option value='net-30'>Net 60 Days</option>
@@ -79,9 +120,20 @@ function InvoiceForm() {
           <div className='space-y-4'>
             <h3 className='text-violet-500 font-bold'>Item List</h3>
             <div className='grid lg:grid-cols-12 gap-4'>
-              <input type='text' placeholder='Item Name' required className='w-full bg-slate-900 rounded-lg p-3 col-span-4' />
-              <input type='number' placeholder='Quantity' required className='w-full bg-slate-900 rounded-lg p-3 col-span-3' min="0" step="1" />
-              <input type='number' placeholder='Price' required className='w-full bg-slate-900 rounded-lg p-3 col-span-2' min="0" step="0.01" />
+              <input 
+                type='text' 
+                placeholder='Item Name' 
+                required 
+                className='w-full bg-slate-900 rounded-lg p-3 col-span-4' />
+              <input 
+                type='number'
+                placeholder='Quantity' 
+                required 
+                className='w-full bg-slate-900 rounded-lg p-3 col-span-3' min="0" step="1" />
+              <input type='number' 
+                placeholder='Price' 
+                required 
+                className='w-full bg-slate-900 rounded-lg p-3 col-span-2' min="0" step="0.01" />
               <div className='col-span-2 text-right'>
                 Total Amount
               </div>
