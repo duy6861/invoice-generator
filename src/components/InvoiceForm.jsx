@@ -31,6 +31,12 @@ function InvoiceForm() {
       amount: 0
     }
   })
+  const addItem = () => {
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      items: [...prevFormData.items, { name: "", quantity: 0, price: 0, total: 0 }]
+    }));
+  }
 
   const handleClose = () => {
     dispatch(toggleForm())
@@ -82,64 +88,93 @@ function InvoiceForm() {
             <h3 className='text-violet-500 font-bold uppercase'>Bill To</h3>
             <input type='text' 
               placeholder="Client's Name" 
+              value={formData.billTo.name}
+              onChange={(e) => setFormData({ ...formData, billTo: { ...formData.billTo, name: e.target.value } })}
               required 
               className='w-full bg-slate-900 rounded-lg p-3' />
             <input type='email' 
               placeholder="Client's Email" 
+              value={formData.billTo.clientEmail}
+              onChange={(e) => setFormData({ ...formData, billTo: { ...formData.billTo, clientEmail: e.target.value } })}
               required 
               className='w-full bg-slate-900 rounded-lg p-3' />
             <input type='text' 
               placeholder='Street Address' 
+              value={formData.billTo.streetAddress}
+              onChange={(e) => setFormData({ ...formData, billTo: { ...formData.billTo, streetAddress: e.target.value } })}
               required 
               className='w-full bg-slate-900 rounded-lg p-3' />
             <input type='text' 
               placeholder='City'
+              value={formData.billTo.city}
+              onChange={(e) => setFormData({ ...formData, billTo: { ...formData.billTo, city: e.target.value } })}
               required 
               className='w-full bg-slate-900 rounded-lg p-3' />
             <input type='text' 
               placeholder='Post Code' 
+              value={formData.billTo.postCode}
+              onChange={(e) => setFormData({ ...formData, billTo: { ...formData.billTo, postCode: e.target.value } })}
               required 
               className='w-full bg-slate-900 rounded-lg p-3' />
             <input type='text' 
               placeholder='Country' 
+              value={formData.billTo.country}
+              onChange={(e) => setFormData({ ...formData, billTo: { ...formData.billTo, country: e.target.value } })}
               required 
               className='w-full bg-slate-900 rounded-lg p-3' />
           </div>
           <div className='space-y-4'>
             <div className='grid grid-cols-2 gap-4'>
               <input type='date' 
+              value={formData.invoiceDate}
+              onChange={(e)=>{
+                const newDate = e.target.value;
+                setFormData({ ...formData, invoiceDate: newDate, dueDate: format(addDays(new Date(newDate), 30), 'yyyy-MM-dd') }  );
+              }}
                 className='w-full bg-slate-900 rounded-lg p-3' />
-              <select className='bg-slate-900 rounded-lg p-3' required>
-                <option value=''>Net 30 Days</option>
-                <option value='net-30'>Net 60 Days</option>
+              <select className='bg-slate-900 rounded-lg p-3' 
+                value={formData.paymentTerms}
+                onChange={(e) => setFormData({ ...formData, paymentTerms: e.target.value })}
+                required>
+                <option value='net-30'>Net 30 Days</option>
+                <option value='net-60'>Net 60 Days</option>
               </select>
             </div>
-            <input type='text' placeholder='Invoice Description' required className='w-full bg-slate-900 rounded-lg p-3' />
+            <input type='text' 
+              placeholder='Invoice Description' 
+              value={formData.projectDescription}
+              onChange={(e) => setFormData({ ...formData, projectDescription: e.target.value })}
+              required 
+              className='w-full bg-slate-900 rounded-lg p-3' />
           </div>
 
           <div className='space-y-4'>
             <h3 className='text-violet-500 font-bold'>Item List</h3>
-            <div className='grid lg:grid-cols-12 gap-4'>
-              <input 
-                type='text' 
-                placeholder='Item Name' 
-                required 
-                className='w-full bg-slate-900 rounded-lg p-3 col-span-4' />
-              <input 
-                type='number'
-                placeholder='Quantity' 
-                required 
-                className='w-full bg-slate-900 rounded-lg p-3 col-span-3' min="0" step="1" />
-              <input type='number' 
-                placeholder='Price' 
-                required 
-                className='w-full bg-slate-900 rounded-lg p-3 col-span-2' min="0" step="0.01" />
-              <div className='col-span-2 text-right'>
-                Total Amount
+              {formData.items.map((item, index) => (
+                <div className='grid lg:grid-cols-12 gap-4'>
+                <input 
+                  type='text' 
+                  placeholder='Item Name' 
+                  required 
+                  className='w-full bg-slate-900 rounded-lg p-3 col-span-4' />
+                <input 
+                  type='number'
+                  placeholder='Quantity' 
+                  required 
+                  className='w-full bg-slate-900 rounded-lg p-3 col-span-3' min="0" step="1" />
+                <input type='number' 
+                  placeholder='Price' 
+                  required 
+                  className='w-full bg-slate-900 rounded-lg p-3 col-span-2' min="0" step="0.01" />
+                <div className='col-span-2 text-right'>
+                  Total Amount
+                </div>
+                <button type='button' className=' text-slate-400 hover:text-red-500'><Trash2 size={20} /></button>
               </div>
-              <button type='button' className=' text-slate-400 hover:text-red-500'><Trash2 size={20} /></button>
-            </div>
-            <button type='button' className='w-full bg-slate-700 hover:bg-slate-600 rounded-lg p-3 flex justify-center items-center space-x-2'>
+              ))}
+            <button type='button' 
+              onClick={addItem}
+              className='w-full bg-slate-700 hover:bg-slate-600 rounded-lg p-3 flex justify-center items-center space-x-2'>
               <Plus size={20} />
               <span>Add New Item</span>
             </button>

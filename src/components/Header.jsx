@@ -8,7 +8,7 @@ function Header({ onNewInvoice }) {
   return (
     <header className='flex items-center justify-between mb-8'>
       <div >
-        <h1 className='text-3xl font-bold text-while mb-2'>Invoices</h1>
+        <h1 className='text-3xl font-bold text-while mb-2'>Invoices list</h1>
         <p className='text-slate-400'>{invoiceList.length === 0 ? "No Invoice" : `There Are ${invoiceList.length} Total Invoices`}</p>
       </div>
       <div className='flex items-center space-x-4'>
