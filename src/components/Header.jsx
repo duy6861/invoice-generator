@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Button, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Filter, Plus } from 'lucide-react'
 import { useSelector } from 'react-redux'

@@ -2,8 +2,34 @@ import React from 'react'
 import { Plus, Trash2, X } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { toggleForm } from '../store/invoiceSlice' // Correctly importing toggleForm
+import { format } from 'date-fns'
 function InvoiceForm() {
   const dispatch = useDispatch()
+  const [formData, setFormData] = React.useState(() => {
+    return {
+      id: `INV${Math.floor(Math.random() * 10000)}`,
+      status: 'pending',
+      billFrom: {
+        streetAddress: '',
+        city: '',
+        postCode: '',
+        country: ''
+      },
+      billTo: {
+        clientEmail: '',
+        streetAddress: '',
+        city: '',
+        postCode: '',
+        country: ''
+      },
+      clientName: '',
+      items: [],
+      paymentTerms: 'net-30',
+      projectDescription: '',
+      invoiceDate: format(new Date(), 'yyyy-MM-dd'), // Default to today
+    }
+  })
+
   const handleClose = () => {
     dispatch(toggleForm())
   }
