@@ -1,7 +1,7 @@
 import React from 'react'
 import { Plus, Trash2, X } from 'lucide-react'
 import { useDispatch } from 'react-redux'
-import { toggleForm } from '../store/invoiceSlice' // Correctly importing toggleForm
+import { toggleForm, addInvoice } from '../store/invoiceSlice' // Correctly importing toggleForm
 import { format, addDays } from 'date-fns'
 function InvoiceForm() {
   const dispatch = useDispatch()
@@ -31,6 +31,10 @@ function InvoiceForm() {
       amount: 0
     }
   })
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(addInvoice(formData))
+  }
   const addItem = () => {
     setFormData(prevFormData => ({
       ...prevFormData,
@@ -66,7 +70,7 @@ function InvoiceForm() {
           </button>
 
         </div>
-        <form className='space-y-6'>
+        <form className='space-y-6' onSubmit={handleSubmit}>
           <div className='space-y-4'>
             <h3 className='text-violet-500 font-bold uppercase'>Bill From</h3>
             <input type='text'
@@ -103,7 +107,7 @@ function InvoiceForm() {
             <input type='text'
               placeholder="Client's Name"
               value={formData.billTo.name}
-              onChange={(e) => setFormData({ ...formData, billTo: { ...formData.billTo, name: e.target.value } })}
+              onChange={(e) => setFormData({ ...formData, billTo: { ...formData, clientName: e.target.value } })}
               required
               className='w-full bg-slate-900 rounded-lg p-3' />
             <input type='email'
@@ -206,7 +210,7 @@ function InvoiceForm() {
           </div>
           <div className='flex justify-end space-x-4 mt-6'>
             <button type='button' className=' bg-violet-500 hover:bg-violet-700 text-white px-6 py-3 rounded-full'>Cancel</button>
-            <button type='button' className=' bg-violet-500 hover:bg-violet-700 text-white px-6 py-3 rounded-full'>Create Invoice</button>
+            <button type='submit' className=' bg-violet-500 hover:bg-violet-700 text-white px-6 py-3 rounded-full'>Create Invoice</button>
           </div>
         </form>
       </div>

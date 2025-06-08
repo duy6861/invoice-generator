@@ -8,6 +8,7 @@ import { toggleForm } from '../store/invoiceSlice' // Correctly importing toggle
 function AppContent() {
   const dispatch = useDispatch()
   const isFormOpen = useSelector((state) => state.invoice.isFormOpen)
+  console.log("isFormOpen", isFormOpen)
   const handleNewInvoice = () => {
 
     dispatch(toggleForm())
