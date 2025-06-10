@@ -2,7 +2,7 @@
 import Header from './Header'
 import InvoiceList from './InvoiceList'
 import InvoiceForm from './InvoiceForm'
-import InvoiceDetail from './invoiceDetail'
+import InvoiceDetail from './InvoiceDetail'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSelectedInvoice, toggleForm } from '../store/invoiceSlice' // Correctly importing toggleForm
