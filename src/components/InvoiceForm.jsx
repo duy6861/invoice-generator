@@ -1,11 +1,17 @@
 import React from 'react'
 import { Plus, Trash2, X } from 'lucide-react'
 import { useDispatch } from 'react-redux'
-import { toggleForm, addInvoice } from '../store/invoiceSlice' // Correctly importing toggleForm
+import { toggleForm, addInvoice, updateInvoice } from '../store/invoiceSlice' // Correctly importing toggleForm
 import { format, addDays } from 'date-fns'
-function InvoiceForm() {
+import { useEffect } from 'react'
+function InvoiceForm({ invoice }) {
   const dispatch = useDispatch()
   const [formData, setFormData] = React.useState(() => {
+    if (invoice) {
+      return {
+        ...invoice,
+      }
+    }
     return {
       id: `INV${Math.floor(Math.random() * 10000)}`,
       status: 'pending',
@@ -31,9 +37,20 @@ function InvoiceForm() {
       amount: 0
     }
   })
+  useEffect(() => {
+    if (invoice) {
+      setFormData(invoice);
+    }
+  }, [invoice])
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(addInvoice(formData))
+    if (invoice) {
+      dispatch(updateInvoice(formData)) // Update existing invoice
+    }
+    else {
+      dispatch(addInvoice(formData))
+    }
+
   }
   const addItem = () => {
     setFormData(prevFormData => ({
@@ -63,7 +80,7 @@ function InvoiceForm() {
     <div className='fixed inset-0 bg-black/50 flex items-start justify-center overflow-y-auto'>
       <div className='bg-slate-800 p-8 rounded-lg w-full max-w-2xl mt-8 mb-8'>
         <div className='flex justify-between items-center mb-6'>
-          <h2 className='text-2xl font-bold uppercase'>New Invoice</h2>
+          <h2 className='text-2xl font-bold uppercase'>{invoice ? "Update Invoice" : "New Invoice"}</h2>
 
           <button className='text-white hover:text-violet-500 transition-colors' onClick={handleClose}>
             <X size={24} />
@@ -106,8 +123,8 @@ function InvoiceForm() {
             <h3 className='text-violet-500 font-bold uppercase'>Bill To</h3>
             <input type='text'
               placeholder="Client's Name"
-              value={formData.billTo.name}
-              onChange={(e) => setFormData({ ...formData, billTo: { ...formData, clientName: e.target.value } })}
+              value={formData.clientName}
+              onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
               required
               className='w-full bg-slate-900 rounded-lg p-3' />
             <input type='email'
@@ -210,7 +227,7 @@ function InvoiceForm() {
           </div>
           <div className='flex justify-end space-x-4 mt-6'>
             <button type='button' className=' bg-violet-500 hover:bg-violet-700 text-white px-6 py-3 rounded-full'>Cancel</button>
-            <button type='submit' className=' bg-violet-500 hover:bg-violet-700 text-white px-6 py-3 rounded-full'>Create Invoice</button>
+            <button type='submit' className=' bg-violet-500 hover:bg-violet-700 text-white px-6 py-3 rounded-full'>{invoice ? "Save Changes" : "Create Invoice"}</button>
           </div>
         </form>
       </div>
