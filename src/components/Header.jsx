@@ -1,10 +1,12 @@
 import React from 'react'
 import { Button, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { Filter, Plus } from 'lucide-react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setFilter } from '../store/invoiceSlice'
 function Header({ onNewInvoice }) {
   const { invoiceList, filter } = useSelector((state) => state.invoice)
   const status = ["all", "paid", "pending", "draft"]
+  const dispatch = useDispatch()
   return (
     <header className='flex items-center justify-between mb-8'>
       <div >
@@ -22,7 +24,9 @@ function Header({ onNewInvoice }) {
               return (
                 <MenuItem key={index}>
                   {({ active }) => (
-                    <Button className={`${active ? "bg-slate-700" : ""} w-full text-left px-4 py-2 rounded-lg capitalize ${filter === item ? "text-violet-500 " : "text-white"}`}>
+                    <Button className={`${active ? "bg-slate-700" : ""} w-full text-left px-4 py-2 rounded-lg capitalize ${filter === item ? "text-violet-500 " : "text-white"}`}
+                      onClick={() => dispatch(setFilter(item))}
+                    >
                       {item}
                     </Button>
                   )}

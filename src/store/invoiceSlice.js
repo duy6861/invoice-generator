@@ -51,6 +51,9 @@ const invoiceSlice = createSlice({
       state.isFormOpen = false;
       saveState(state);
     },
+    setFilter: (state, action) => {
+      state.filter = action.payload;
+    },
 
     toggleForm: (state) => {
       state.isFormOpen = !state.isFormOpen;
@@ -59,8 +62,43 @@ const invoiceSlice = createSlice({
       }
       saveState(state);
     },
+    setSelectedInvoice: (state, action) => {
+      state.selectedInvoice = action.payload;
+      state.isFormOpen = false;
+    },
+    markAsPaid: (state, action) => {
+      const invoice = state.invoiceList.find((inv) => inv.id === action.payload);
+      if (invoice) {
+        invoice.status = "paid";
+        state.selectedInvoice = null; // Update selected invoice if needed
+        state.isFormOpen = false;
+        saveState(state);
+      }
+    },
+    deleteInvoice: (state, action) => {
+      state.invoiceList = state.invoiceList.filter(
+        (inv) => inv.id !== action.payload
+      );
+      state.selectedInvoice = null; // Reset selected invoice if deleted
+      saveState(state);
+    },
+    updateInvoice: (state, action) => {
+      const updatedInvoice = action.payload;
+      const invoiceIndex = state.invoiceList.findIndex((inv) => inv.id === updatedInvoice.id);
+      if (invoiceIndex !== -1) {
+        state.invoiceList[invoiceIndex] = {
+          ...state.invoiceList[invoiceIndex],
+          ...updatedInvoice,
+          amount: calculateAmount(updatedInvoice.items || state.invoiceList[invoiceIndex].items),
+        };
+        state.selectedInvoice = null;
+        state.isFormOpen = false;
+        saveState(state);
+      }
+    }
+
   },
 });
 
-export const { addInvoice, toggleForm } = invoiceSlice.actions;
+export const { addInvoice, toggleForm, setFilter, setSelectedInvoice, markAsPaid, deleteInvoice, updateInvoice } = invoiceSlice.actions;
 export default invoiceSlice.reducer;
