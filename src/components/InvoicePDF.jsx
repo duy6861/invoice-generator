@@ -1,45 +1,53 @@
-import React from 'react'
+import React from "react";
 import {
   Page,
   Text,
   View,
   Document,
   StyleSheet,
+  Image,
 } from "@react-pdf/renderer";
+
+// 🎨 Thiết kế giao diện đẹp hơn
 const styles = StyleSheet.create({
   page: {
-    padding: 30,
+    padding: 40,
     fontSize: 12,
     fontFamily: 'Helvetica',
     color: '#333',
+    backgroundColor: '#fff',
   },
-  section: {
+  headerSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 20,
+    paddingBottom: 15,
+    borderBottom: '1.5pt solid #e0e0e0',
   },
-  header: {
-    fontSize: 24,
-    marginBottom: 5,
+  companyInfo: {
     fontWeight: 'bold',
-    color: '#111',
+    fontSize: 16,
+    color: '#2c3e50',
   },
-  subHeader: {
-    fontSize: 14,
-    marginBottom: 10,
-    color: '#666',
-  },
-  label: {
+  invoiceTitle: {
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 2,
+    color: '#1a1a1a',
   },
-  status: {
+  invoiceMeta: {
     fontSize: 12,
-    paddingVertical: 4,
+    color: '#555',
+  },
+  statusBadge: {
+    paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 4,
     alignSelf: 'flex-start',
     textTransform: 'uppercase',
     fontWeight: 'bold',
     color: '#fff',
+    marginTop: 5,
   },
   paid: {
     backgroundColor: '#28a745',
@@ -49,34 +57,59 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     gap: 20,
+    marginBottom: 20,
   },
   column: {
     flex: 1,
   },
-  itemTableHeader: {
-    flexDirection: 'row',
-    borderBottom: '1pt solid #ccc',
-    paddingBottom: 4,
+  label: {
+    fontWeight: 'bold',
     marginBottom: 4,
+    color: '#333',
   },
-  itemTableRow: {
+  tableHeader: {
+    flexDirection: 'row',
+    backgroundColor: '#f5f5f5',
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+    paddingBottom: 6,
+    marginBottom: 6,
+    fontWeight: 'bold',
+  },
+  tableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 2,
+    marginVertical: 4,
   },
-  itemCol1: { flex: 2 },
-  itemCol2: { flex: 1, textAlign: 'center' },
-  itemCol3: { flex: 1, textAlign: 'right' },
+  colItemName: { flex: 3 },
+  colQty: { flex: 1, textAlign: 'center' },
+  colTotal: { flex: 1, textAlign: 'right' },
+  totalContainer: {
+    marginTop: 20,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    alignItems: 'flex-end',
+  },
   totalAmount: {
-    textAlign: 'right',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 10,
+    color: '#2c3e50',
+  },
+  footer: {
+    marginTop: 40,
+    textAlign: 'center',
+    fontSize: 10,
+    color: '#999',
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    paddingTop: 10,
   },
 });
-export default function InvoicePDF({ invoice }) {
+
+// 📄 Component chính
+const InvoicePDF = ({ invoice }) => {
   const {
     id,
     clientName,
@@ -90,21 +123,31 @@ export default function InvoicePDF({ invoice }) {
     items,
     amount,
   } = invoice;
+
   const statusStyle = status === "paid" ? styles.paid : styles.pending;
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         {/* 🧾 Header */}
-        <View style={styles.section}>
-          <Text style={styles.header}>Invoice #{id}</Text>
-          <Text style={styles.subHeader}>{projectDescription}</Text>
-          <Text style={[styles.status, statusStyle]}>{status}</Text>
+        <View style={styles.headerSection}>
+          <View>
+            <Text style={styles.companyInfo}>{billFrom.company || "Company Name"}</Text>
+            <Text>{billFrom.streetAddress}</Text>
+            <Text>{billFrom.city}, {billFrom.postCode}, {billFrom.country}</Text>
+          </View>
+          <View style={{ textAlign: 'right' }}>
+            <Text style={styles.invoiceTitle}>Invoice #{id}</Text>
+            <Text style={styles.invoiceMeta}>Due Date: {dueDate}</Text>
+            <Text style={[styles.statusBadge, statusStyle]}>{status}</Text>
+          </View>
         </View>
 
-        {/* 🧍 From & To */}
-        <View style={[styles.section, styles.row]}>
+        {/* 👤 Bill From & To */}
+        <View style={styles.row}>
           <View style={styles.column}>
             <Text style={styles.label}>Bill From:</Text>
+            <Text>{billFrom.name || "John Doe"}</Text>
             <Text>{billFrom.streetAddress}</Text>
             <Text>{billFrom.city}, {billFrom.postCode}</Text>
             <Text>{billFrom.country}</Text>
@@ -120,34 +163,41 @@ export default function InvoicePDF({ invoice }) {
         </View>
 
         {/* 📅 Dates */}
-        <View style={styles.section}>
+        <View style={{ marginBottom: 20 }}>
           <Text><Text style={styles.label}>Invoice Date:</Text> {invoiceDate}</Text>
-          <Text><Text style={styles.label}>Due Date:</Text> {dueDate}</Text>
           <Text><Text style={styles.label}>Payment Terms:</Text> {paymentTerms}</Text>
+          <Text><Text style={styles.label}>Project:</Text> {projectDescription}</Text>
         </View>
 
-        {/* 📦 Items */}
-        <View style={styles.section}>
-          <Text style={styles.label}>Items:</Text>
-          <View style={styles.itemTableHeader}>
-            <Text style={styles.itemCol1}>Item</Text>
-            <Text style={styles.itemCol2}>Qty</Text>
-            <Text style={styles.itemCol3}>Total</Text>
+        {/* 📦 Items Table */}
+        <View style={{ marginBottom: 20 }}>
+          <View style={styles.tableHeader}>
+            <Text style={styles.colItemName}>Item</Text>
+            <Text style={styles.colQty}>Qty</Text>
+            <Text style={styles.colTotal}>Total</Text>
           </View>
           {items.map((item, index) => (
-            <View key={index} style={styles.itemTableRow}>
-              <Text style={styles.itemCol1}>{item.name}</Text>
-              <Text style={styles.itemCol2}>{item.quantity}</Text>
-              <Text style={styles.itemCol3}>${item.total}</Text>
+            <View key={index} style={styles.tableRow}>
+              <Text style={styles.colItemName}>{item.name}</Text>
+              <Text style={styles.colQty}>{item.quantity}</Text>
+              <Text style={styles.colTotal}>${item.total.toFixed(2)}</Text>
             </View>
           ))}
         </View>
 
-        {/* 💰 Total */}
-        <View>
-          <Text style={styles.totalAmount}>Total Amount: ${amount}</Text>
+        {/* 💰 Total Amount */}
+        <View style={styles.totalContainer}>
+          <Text style={styles.totalAmount}>Total: ${amount.toFixed(2)}</Text>
+        </View>
+
+        {/* 📝 Footer */}
+        <View style={styles.footer}>
+          <Text>Thank you for your business!</Text>
+          <Text>Email: {billFrom.email || "support@company.com"}</Text>
         </View>
       </Page>
     </Document>
   );
-}
+};
+
+export default InvoicePDF;
